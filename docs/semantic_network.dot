@@ -1,0 +1,19 @@
+digraph KR {
+ graph [label="Group 9  |  Job Role & Skill Matching Semantic Network",labelloc=t,fontname="DejaVu Sans",fontsize=21,bgcolor="#ffffff",ranksep=1.0,nodesep=.52,pad=.35];
+ node [shape=box,style="rounded,filled",fontname="DejaVu Sans",fontsize=11,color="#D8E1EF",fillcolor="#F0F4FA",fontcolor="#223B5D",margin=".22,.16"];
+ edge [color="#8C9FB9",fontname="DejaVu Sans",fontsize=10,fontcolor="#496487",arrowsize=.7];
+ Candidate [fillcolor="#EAF1FF",color="#A5BFF0"]; JobRole [fillcolor="#EAF1FF",color="#A5BFF0"];
+ Skill [fillcolor="#EAF8F3",color="#B1DDD0"]; Degree [fillcolor="#EAF8F3",color="#B1DDD0"]; Certification [fillcolor="#EAF8F3",color="#B1DDD0"];
+ Person [shape=ellipse]; Opportunity [shape=ellipse];
+ Candidate -> Person [label="is-a"]; JobRole -> Opportunity [label="is-a"];
+ Candidate -> Skill [label="has-skill"]; Candidate -> Degree [label="has-degree"]; Candidate -> Certification [label="has-cert"];
+ JobRole -> Skill [label="requires-skill"]; JobRole -> Certification [label="requires-cert"]; JobRole -> Degree [label="accepts-degree"];
+ Candidate -> JobRole [label="eligible-for (derived)",color="#3F6AC2",fontcolor="#3F6AC2",penwidth=2];
+ Experience [shape=box,fillcolor="#FFF6E8",color="#E8D4B1"];
+ Verification [shape=box,fillcolor="#FFF6E8",color="#E8D4B1"];
+ Candidate -> Experience [label="years-experience"]; JobRole -> Experience [label="minimum-years"];
+ Candidate -> Verification [label="verified-status"];
+ SkillEvidence [label="Skill evidence\n(derived)",fillcolor="#DDF3EB",color="#B1DDD0"];
+ Skill -> SkillEvidence [style=dashed,label="supports"];
+ SkillEvidence -> JobRole [style=dashed,label="all required skills proven"];
+}

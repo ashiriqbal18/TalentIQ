@@ -1,0 +1,717 @@
+
+/* ==========================================================
+   TALENTIQ - PROFESSIONAL PROFILE PAGE
+   ========================================================== */
+
+:root {
+    --profile-primary: #4169e1;
+    --profile-primary-dark: #3054c5;
+    --profile-navy: #17243b;
+    --profile-text: #27364e;
+    --profile-muted: #7c899e;
+    --profile-border: #e5eaf2;
+    --profile-background: #f6f8fc;
+    --profile-white: #ffffff;
+    --profile-success: #159467;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: var(--profile-background);
+    color: var(--profile-navy);
+}
+
+/* ==========================================================
+   PROFILE PAGE CONTAINER
+   ========================================================== */
+
+.profile-page {
+    padding-top: 48px;
+    padding-bottom: 95px;
+    min-height: 75vh;
+}
+
+/* ==========================================================
+   PROFILE HEADER
+   ========================================================== */
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 25px;
+
+    background: var(--profile-white);
+    border: 1px solid var(--profile-border);
+    border-radius: 18px;
+
+    padding: 35px;
+    margin-bottom: 30px;
+
+    box-shadow: 0 5px 25px rgba(20, 40, 90, 0.035);
+}
+
+.profile-avatar {
+    width: 95px;
+    height: 95px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(
+        145deg,
+        #e8efff,
+        #dfe9ff
+    );
+
+    border-radius: 22px;
+    color: var(--profile-primary);
+    font-size: 48px;
+    flex-shrink: 0;
+}
+
+.profile-heading {
+    min-width: 0;
+}
+
+.profile-heading h1 {
+    font-size: 29px;
+    font-weight: 800;
+    letter-spacing: -0.7px;
+    margin-bottom: 8px;
+}
+
+.profile-heading p {
+    color: var(--profile-muted);
+    font-size: 14px;
+    margin-bottom: 12px;
+    overflow-wrap: anywhere;
+}
+
+.profile-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    background: #e5f7ef;
+    color: var(--profile-success);
+
+    padding: 7px 12px;
+    border-radius: 7px;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.profile-header > .btn {
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 9px;
+    padding: 12px 18px;
+}
+
+/* ==========================================================
+   PROFILE SIDEBAR
+   ========================================================== */
+
+.profile-side-card {
+    background: var(--profile-white);
+    border: 1px solid var(--profile-border);
+    border-radius: 16px;
+
+    padding: 26px 20px;
+
+    box-shadow: 0 4px 20px rgba(20, 40, 90, 0.025);
+}
+
+.profile-side-card h5 {
+    font-size: 17px;
+    font-weight: 800;
+    margin: 0 0 24px;
+    padding: 0 10px;
+}
+
+.profile-side-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    width: 100%;
+    min-height: 47px;
+    padding: 13px 14px;
+
+    color: #66758c;
+    font-size: 12px;
+    font-weight: 600;
+
+    border-radius: 10px;
+    margin-bottom: 5px;
+
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+}
+
+.profile-side-link i {
+    width: 19px;
+    font-size: 17px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.profile-side-link:hover,
+.profile-side-link.active {
+    background: #edf2ff;
+    color: var(--profile-primary);
+}
+
+.profile-side-link:focus-visible {
+    outline: 2px solid var(--profile-primary);
+    outline-offset: 2px;
+}
+
+.profile-side-link small {
+    margin-left: auto;
+    font-size: 10px;
+}
+
+.profile-side-link.unavailable {
+    opacity: 0.55;
+    cursor: default;
+}
+
+/* ==========================================================
+   SIDEBAR HELP CARD
+   ========================================================== */
+
+.profile-help-card {
+    margin-top: 22px;
+    padding: 28px;
+
+    background: linear-gradient(
+        145deg,
+        #172b59,
+        #294580
+    );
+
+    border-radius: 16px;
+    color: white;
+}
+
+.profile-help-card > i {
+    font-size: 29px;
+    color: #a5baff;
+}
+
+.profile-help-card h5 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 20px;
+    margin-bottom: 13px;
+}
+
+.profile-help-card p {
+    font-size: 12px;
+    line-height: 1.9;
+    color: #c4d1ec;
+    margin: 0;
+}
+
+/* ==========================================================
+   MAIN CONTENT CARDS
+   ========================================================== */
+
+.profile-content-card {
+    background: var(--profile-white);
+    border: 1px solid var(--profile-border);
+    border-radius: 16px;
+
+    padding: 33px;
+    margin-bottom: 25px;
+
+    box-shadow: 0 4px 22px rgba(20, 40, 90, 0.025);
+
+    scroll-margin-top: 25px;
+}
+
+.section-card-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+
+    padding-bottom: 24px;
+    margin-bottom: 27px;
+
+    border-bottom: 1px solid var(--profile-border);
+}
+
+.section-card-heading h4 {
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    margin-bottom: 8px;
+}
+
+.section-card-heading p {
+    color: var(--profile-muted);
+    font-size: 12px;
+    line-height: 1.8;
+    margin: 0;
+}
+
+.section-card-heading > i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 46px;
+    height: 46px;
+
+    border-radius: 12px;
+    background: #edf2ff;
+    color: var(--profile-primary);
+
+    font-size: 21px;
+    flex-shrink: 0;
+}
+
+/* ==========================================================
+   FORM LABELS AND INPUTS
+   ========================================================== */
+
+.profile-content-card .form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--profile-text);
+    margin-bottom: 10px;
+}
+
+.profile-content-card .form-control,
+.profile-content-card .form-select {
+    width: 100%;
+    min-height: 49px;
+
+    padding: 12px 14px;
+
+    border: 1px solid #dfe6f0;
+    border-radius: 9px;
+
+    background-color: #ffffff;
+    color: var(--profile-navy);
+    font-size: 13px;
+
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.profile-content-card .form-control::placeholder {
+    color: #a1adbe;
+}
+
+.profile-content-card .form-control:focus,
+.profile-content-card .form-select:focus {
+    border-color: var(--profile-primary);
+    box-shadow: 0 0 0 4px rgba(65, 105, 225, 0.09);
+    outline: none;
+}
+
+.profile-content-card .form-control:disabled {
+    background: #f0f3f8;
+    color: #758398;
+    cursor: not-allowed;
+}
+
+.profile-content-card .form-text,
+.field-help {
+    display: block;
+    margin-top: 8px;
+    font-size: 11px;
+    color: #8996aa;
+    line-height: 1.7;
+}
+
+.profile-content-card .form-check-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--profile-text);
+    cursor: pointer;
+}
+
+.profile-content-card .form-check-input {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.profile-content-card .form-check-input:checked {
+    background-color: var(--profile-primary);
+    border-color: var(--profile-primary);
+}
+
+/* ==========================================================
+   FORM ACTIONS AND BUTTONS
+   ========================================================== */
+
+.profile-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    margin-top: 28px;
+    padding-top: 23px;
+
+    border-top: 1px solid var(--profile-border);
+}
+
+.profile-content-card .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--profile-primary);
+    border: 1px solid var(--profile-primary);
+
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+
+    padding: 12px 22px;
+    border-radius: 9px;
+
+    transition: background 0.2s, transform 0.2s;
+}
+
+.profile-content-card .btn-primary:hover {
+    background: var(--profile-primary-dark);
+    border-color: var(--profile-primary-dark);
+    transform: translateY(-1px);
+}
+
+.profile-content-card .btn-primary:focus-visible,
+.profile-content-card .btn-outline-danger:focus-visible {
+    outline: 3px solid #9fb3ff;
+    outline-offset: 2px;
+}
+
+.profile-content-card .btn-outline-danger {
+    border-radius: 8px;
+    padding: 9px 13px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* ==========================================================
+   ADD SKILL FORM
+   ========================================================== */
+
+.add-skill-form {
+    background: #f7f9fd;
+    border: 1px solid #edf1f7;
+
+    padding: 24px;
+    border-radius: 12px;
+
+    margin-bottom: 30px;
+}
+
+.add-skill-form .btn-primary {
+    min-height: 49px;
+}
+
+/* ==========================================================
+   SKILL RECORDS
+   ========================================================== */
+
+.skills-list > h6,
+.profile-content-card > h6 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.skill-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    padding: 17px 0;
+    border-bottom: 1px solid #edf0f5;
+}
+
+.skill-name {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.skill-icon {
+    width: 43px;
+    height: 43px;
+    border-radius: 10px;
+
+    background: #eaf0ff;
+    color: var(--profile-primary);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 19px;
+    flex-shrink: 0;
+}
+
+.skill-name h6 {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.skill-level {
+    color: var(--profile-muted);
+    font-size: 11px;
+}
+
+.btn-remove-skill {
+    width: 37px;
+    height: 37px;
+
+    border: none;
+    border-radius: 9px;
+
+    background: #fff0f0;
+    color: #d84c4c;
+
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-remove-skill:hover {
+    background: #ffe0e0;
+}
+
+/* ==========================================================
+   EDUCATION, EXPERIENCE, CERTIFICATION RECORDS
+   ========================================================== */
+
+.profile-record {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    padding: 20px 22px;
+    margin-top: 14px;
+
+    background: #ffffff;
+    border: 1px solid var(--profile-border);
+    border-radius: 12px;
+
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.profile-record:hover {
+    border-color: #c7d4f7;
+    box-shadow: 0 5px 16px rgba(31, 60, 120, 0.04);
+}
+
+.profile-record > div {
+    min-width: 0;
+}
+
+.profile-record h6 {
+    color: var(--profile-navy);
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 7px;
+}
+
+.profile-record small {
+    display: block;
+    color: var(--profile-muted);
+    font-size: 12px;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+.profile-record form {
+    flex-shrink: 0;
+}
+
+/* ==========================================================
+   EMPTY STATES
+   ========================================================== */
+
+.profile-empty,
+.skills-empty {
+    background: #f8fafd;
+    border: 1px dashed #d5dfed;
+    border-radius: 12px;
+
+    padding: 35px 22px;
+    margin-top: 17px;
+
+    text-align: center;
+    font-size: 13px;
+    color: #8492a8;
+    line-height: 1.8;
+}
+
+.skills-empty i {
+    display: block;
+    font-size: 32px;
+    color: #9aaed0;
+    margin-bottom: 12px;
+}
+
+.skills-empty p {
+    margin-bottom: 0;
+}
+
+/* ==========================================================
+   SECTION SPACING
+   ========================================================== */
+
+#skills,
+#education,
+#experience,
+#certifications,
+#preferences {
+    scroll-margin-top: 30px;
+}
+
+#education .profile-form-actions,
+#experience .profile-form-actions,
+#certifications .profile-form-actions,
+#preferences .profile-form-actions {
+    margin-bottom: 25px;
+}
+
+/* ==========================================================
+   TABLET RESPONSIVENESS
+   ========================================================== */
+
+@media (max-width: 991px) {
+
+    .profile-page {
+        padding-top: 30px;
+    }
+
+    .profile-header {
+        padding: 28px;
+    }
+
+    .profile-side-card {
+        padding: 23px;
+    }
+
+    .profile-content-card {
+        padding: 28px;
+    }
+
+    .profile-side-link {
+        font-size: 12px;
+    }
+}
+
+/* ==========================================================
+   MOBILE RESPONSIVENESS
+   ========================================================== */
+
+@media (max-width: 767px) {
+
+    .profile-page {
+        padding-top: 25px;
+        padding-bottom: 60px;
+    }
+
+    .profile-header {
+        padding: 22px;
+        gap: 15px;
+        border-radius: 14px;
+    }
+
+    .profile-avatar {
+        width: 65px;
+        height: 65px;
+        border-radius: 15px;
+        font-size: 34px;
+    }
+
+    .profile-heading h1 {
+        font-size: 21px;
+    }
+
+    .profile-heading p {
+        font-size: 12px;
+    }
+
+    .profile-side-card {
+        padding: 20px;
+    }
+
+    .profile-content-card {
+        padding: 21px;
+        border-radius: 14px;
+    }
+
+    .section-card-heading h4 {
+        font-size: 18px;
+    }
+
+    .section-card-heading > i {
+        width: 39px;
+        height: 39px;
+        font-size: 18px;
+    }
+
+    .add-skill-form {
+        padding: 16px;
+    }
+
+    .profile-form-actions {
+        justify-content: stretch;
+    }
+
+    .profile-form-actions .btn {
+        width: 100%;
+    }
+
+    .profile-record {
+        padding: 18px;
+        gap: 14px;
+    }
+}
+
+@media (max-width: 575px) {
+
+    .profile-header > .btn {
+        width: 100%;
+    }
+
+    .profile-record {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .profile-record form {
+        width: 100%;
+    }
+
+    .profile-record form button {
+        width: 100%;
+    }
+
+    .skill-row {
+        align-items: flex-start;
+    }
+
+    .section-card-heading {
+        gap: 10px;
+    }
+}
+    

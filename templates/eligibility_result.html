@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eligibility Report | TalentIQ</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="{{ url_for('static',filename='css/portal.css') }}" rel="stylesheet">
+<link href="{{ url_for('static',filename='css/reasoning.css') }}" rel="stylesheet"></head>
+<body>
+<nav class="navbar portal-navbar"><div class="container"><a class="navbar-brand" href="{{ url_for('dashboard') }}"><i class="bi bi-briefcase-fill"></i> Talent<span>IQ</span></a><div class="d-flex gap-3 align-items-center"><a href="{{ url_for('dashboard') }}">Find Jobs</a><a href="{{ url_for('profile') }}">My Profile</a><a href="{{ url_for('knowledge_explorer') }}">Knowledge Explorer</a></div></div></nav>
+<main class="container reasoning-page">
+<a class="reasoning-back" href="{{ url_for('job_detail',job_id=job.id) }}"><i class="bi bi-arrow-left"></i> Back to Job</a>
+<div class="report-top"><div><div class="eyebrow">EXPLAINABLE EXPERT SYSTEM</div><h1>Eligibility Analysis</h1><p>{{ job.title }} · {{ job.company or 'Company' }}</p></div>
+<span class="status-pill {{ 'is-eligible' if analysis.status == 'Eligible' else 'is-ineligible' if analysis.status == 'Not Eligible' else 'is-unknown' }}">{{ analysis.status }}</span></div>
+<div class="row g-4"><div class="col-lg-8"><section class="reason-card"><h2>Decision explanation</h2><p>{{ analysis.note }}</p><p class="reason-muted">The result uses profile statements as evidence, not independently verified credentials. Missing information is not automatically treated as false.</p>
+{% if analysis.unmet_mandatory %}
+<div class="mt-3" style="padding:14px 16px;background:#f8faff;border:1px solid #e2e9f5;border-radius:10px;">
+<strong>Mandatory requirements needing attention ({{ analysis.unmet_mandatory|length }})</strong>
+<ul class="mb-0 mt-2 ps-3">
+{% for check in analysis.unmet_mandatory %}
+<li class="mb-2">{{ check.reason or (check.name ~ ": evidence not recorded") }}</li>
+{% endfor %}
+</ul>
+</div>
+{% endif %}
+<div class="metric-row"><div><strong>{{ analysis.mandatory_met }} / {{ analysis.mandatory_total }}</strong><small>Mandatory conditions supported</small></div><div><strong>{{ analysis.preferred_met }} / {{ analysis.preferred_total }}</strong><small>Preferred conditions supported</small></div></div></section>
+<section class="reason-card"><h2>Requirement-by-requirement evaluation</h2>
+{% for check in analysis.checks %}<div class="reason-check"><div class="reason-icon {{ 'ok' if check.met else 'missing' }}"><i class="bi {{ 'bi-check-circle-fill' if check.met else 'bi-question-circle-fill' }}"></i></div><div class="flex-grow-1"><div class="d-flex flex-wrap gap-2 align-items-center"><strong>{{ check.name }}</strong><span class="reason-tag">{{ check.category }}</span><span class="reason-tag">{{ check.importance }}</span></div><small>{{ check.detail }}</small>{% if not check.met and check.reason %}<div class="reason-muted mt-1">{{ check.reason }}</div>{% endif %}</div><span class="reason-state">{{ 'Supported' if check.met else 'Below threshold' if check.explicitly_below else 'Not evidenced' }}</span></div>
+{% endfor %}</section>
+<!-- FORWARD CHAINING: VISUAL INFERENCE TIMELINE -->
+<section class="reason-card inference-panel" id="forward-chaining">
+  <div class="inference-head">
+    <div class="inference-heading-icon"><i class="bi bi-diagram-3"></i></div>
+    <div class="flex-grow-1"><div class="eyebrow mb-1">DATA-DRIVEN INFERENCE</div><h2 class="mb-1">Forward Chaining</h2><p class="reason-muted mb-0">Start with candidate facts, fire applicable Horn rules, and derive new facts round by round.</p></div>
+    <span class="proof-chip {{ 'proof-yes' if analysis.result.forward_proved else 'proof-no' }}"><i class="bi {{ 'bi-check-circle-fill' if analysis.result.forward_proved else 'bi-exclamation-circle' }}"></i> {{ 'Goal proved' if analysis.result.forward_proved else 'Goal not proved' }}</span>
+  </div>
+  <div class="inference-start"><i class="bi bi-database-check"></i><div><strong>Initial knowledge base</strong><small>Candidate profile + selected job + saved requirement facts</small></div></div>
+  {% for round in analysis.result.rounds %}
+    <div class="inference-round">
+      <div class="round-marker">{{ loop.index }}</div>
+      <div class="round-content"><div class="round-topline"><h3>Round {{ loop.index }}</h3><span>{{ round|length }} new fact{{ '' if round|length == 1 else 's' }}</span></div>
+      {% for deduction in round %}
+        <div class="deduction-card">
+          <div class="deduction-rule"><i class="bi bi-lightning-charge-fill"></i><span>RULE FIRED</span><code>{{ deduction.rule }}</code></div>
+          {% if deduction.premises %}
+          <div class="deduction-premises"><span class="micro-label">SUPPORTED BY</span><div class="premise-items">{% for premise in deduction.premises %}<code>{{ premise[0] }}({{ premise[1:] | join(', ') }})</code>{% endfor %}</div></div>
+          {% endif %}
+          <div class="deduction-arrow"><i class="bi bi-arrow-down"></i></div>
+          <div class="deduction-output"><i class="bi bi-check2-circle"></i><div><span class="micro-label">NEW FACT DERIVED</span><code>{{ deduction.conclusion[0] }}({{ deduction.conclusion[1:] | join(', ') }})</code></div></div>
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    <div class="inference-empty"><i class="bi bi-info-circle"></i> No new facts could be derived from the supplied evidence.</div>
+  {% endfor %}
+  <div class="inference-outcome {{ 'outcome-pass' if analysis.result.forward_proved else 'outcome-pending' }}"><i class="bi {{ 'bi-patch-check-fill' if analysis.result.forward_proved else 'bi-shield-exclamation' }}"></i><div><strong>{{ 'Eligibility goal successfully derived' if analysis.result.forward_proved else 'Eligibility goal could not be derived' }}</strong><small>{{ 'All mandatory premises were proved.' if analysis.result.forward_proved else 'At least one mandatory premise remains unproved; see the requirement checks above.' }}</small></div></div>
+</section>
+<!-- BACKWARD CHAINING: GOAL-DRIVEN PROOF EXPLORER -->
+<section class="reason-card inference-panel" id="backward-chaining">
+  <div class="inference-head">
+    <div class="inference-heading-icon"><i class="bi bi-bullseye"></i></div>
+    <div class="flex-grow-1"><div class="eyebrow mb-1">GOAL-DRIVEN INFERENCE</div><h2 class="mb-1">Backward Chaining</h2><p class="reason-muted mb-0">Start from the eligibility goal, then recursively verify supporting facts and subgoals.</p></div>
+    <span class="proof-chip {{ 'proof-yes' if analysis.result.backward_proved else 'proof-no' }}"><i class="bi {{ 'bi-check-circle-fill' if analysis.result.backward_proved else 'bi-exclamation-circle' }}"></i> {{ 'Goal proved' if analysis.result.backward_proved else 'Goal not proved' }}</span>
+  </div>
+  <div class="goal-banner"><i class="bi bi-crosshair"></i><div><span class="micro-label">TARGET GOAL</span><code>eligible({{ candidate.id }}, {{ job.id }})</code></div></div>
+  <div class="proof-diagnostic-panel">
+    <h3>Mandatory premises — complete evidence audit</h3>
+    <p class="reason-muted">All checks below come from saved requirements. This is a separate diagnostic audit; the recursive backward proof trace may stop at its first failed subgoal.</p>
+    {% for check in analysis.checks if check.importance == 'Mandatory' %}
+      <div class="proof-diagnostic-row">
+        <i class="bi {{ 'bi-check-circle-fill text-success' if check.met else 'bi-x-circle-fill text-danger' if check.explicitly_below else 'bi-question-circle-fill text-warning' }}"></i>
+        <div><strong>{{ check.name }}</strong><span>{{ check.reason if not check.met else check.detail }}</span></div>
+        <small>{{ 'Proved' if check.met else 'Below threshold' if check.explicitly_below else 'Unknown / not evidenced' }}</small>
+      </div>
+    {% endfor %}
+</div>
+<div class="proof-explorer-title"><h3>Proof search steps</h3><span>{{ analysis.result.backward_trace|length }} trace events</span></div>
+  <ol class="proof-events">
+  {% for step in analysis.result.backward_trace %}
+    {% set line = step|trim %}
+    {% set is_proved = line.startswith('PROVED ') or line.startswith('FACT ') %}
+    {% set is_failed = line.startswith('NOT PROVED ') or line.startswith('RULE FAILED ') or line.startswith('CYCLE ') %}
+    {% set is_try = line.startswith('TRY ') %}
+    <li class="proof-event {{ 'event-pass' if is_proved else 'event-fail' if is_failed else 'event-try' if is_try else 'event-neutral' }}">
+      <div class="proof-event-index"><i class="bi {{ 'bi-check-lg' if is_proved else 'bi-x-lg' if is_failed else 'bi-search' if is_try else 'bi-dot' }}"></i></div>
+      <div class="proof-event-body">
+        <span class="event-type">{{ 'FACT / PROVED' if is_proved else 'NOT PROVED / FAILED' if is_failed else 'TRY RULE / SUBGOAL' if is_try else 'TRACE' }}</span>
+        <code class="event-statement">{{ line }}</code>
+      </div>
+    </li>
+  {% else %}
+    <li class="inference-empty">No backward proof events were produced.</li>
+  {% endfor %}
+  </ol>
+  <div class="inference-outcome {{ 'outcome-pass' if analysis.result.backward_proved else 'outcome-pending' }}"><i class="bi {{ 'bi-patch-check-fill' if analysis.result.backward_proved else 'bi-shield-exclamation' }}"></i><div><strong>{{ 'Goal proved by backward chaining' if analysis.result.backward_proved else 'Goal was not proved by backward chaining' }}</strong><small>Not proved does not automatically mean the missing evidence is false. Check the diagnostics above.</small></div></div>
+  <details class="raw-trace-details"><summary><i class="bi bi-terminal me-2"></i>View original technical trace</summary><pre class="proof-trace">{% for step in analysis.result.backward_trace %}{{ step }}
+{% endfor %}</pre></details>
+</section></div>
+<div class="col-lg-4"><section class="reason-card"><h2>What can I do?</h2><p class="reason-muted">Complete your profile to supply missing skills, education, certifications, or dated work experience.</p><a class="btn btn-primary w-100 mb-2" href="{{ url_for('profile') }}">Update My Profile</a><a class="btn btn-outline-primary w-100" href="{{ url_for('knowledge_explorer') }}">Explore Knowledge Model</a></section><section class="reason-card"><h2>Inference summary</h2><p><strong>Forward:</strong> {{ 'Proved' if analysis.result.forward_proved else 'Not proved' }}</p><p><strong>Backward:</strong> {{ 'Proved' if analysis.result.backward_proved else 'Not proved' }}</p><p class="reason-muted mb-0">Both algorithms operate on actual job requirements and your saved profile, with the same finite positive Horn clauses.</p></section></div></div>
+</main></body></html>

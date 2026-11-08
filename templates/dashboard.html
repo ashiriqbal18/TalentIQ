@@ -1,0 +1,682 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>Find Jobs | TalentIQ</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet">
+
+    <!-- Portal CSS -->
+    <link
+        href="{{ url_for('static', filename='css/portal.css') }}"
+        rel="stylesheet">
+</head>
+
+<body>
+
+<!-- =====================================================
+     NAVIGATION BAR
+===================================================== -->
+
+<nav class="navbar navbar-expand-lg portal-navbar">
+
+    <div class="container">
+
+        <!-- Brand -->
+        <a class="navbar-brand"
+           href="{{ url_for('dashboard') }}">
+
+            <i class="bi bi-briefcase-fill"></i>
+            Talent<span>IQ</span>
+
+        </a>
+
+        <!-- Mobile Menu Button -->
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#portalNav"
+                aria-controls="portalNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+
+        <div class="collapse navbar-collapse"
+             id="portalNav">
+
+            <!-- Navigation Links -->
+            <div class="navbar-nav mx-auto">
+
+                <!-- Find Jobs -->
+                <a class="nav-link active"
+                   href="{{ url_for('dashboard') }}">
+
+                    Find Jobs
+
+                </a>
+
+                <!-- Post Job -->
+                <a class="nav-link"
+                   href="{{ url_for('post_job') }}">
+
+                    Post a Job
+
+                </a>
+
+                <!-- My Job Posts -->
+                <a class="nav-link"
+                   href="{{ url_for('my_jobs') }}">
+
+                    My Job Posts
+
+                </a>
+
+                <!-- My Profile -->
+                <a class="nav-link"
+                   href="{{ url_for('profile') }}">
+
+                    <i class="bi bi-person-circle me-1"></i>
+                    My Profile
+
+                </a>
+
+            </div>
+
+
+            <!-- Current User and Logout -->
+            <div class="d-flex align-items-center gap-3 user-menu">
+
+                <span>
+                    <i class="bi bi-person-circle me-1"></i>
+                    {{ current_user.full_name }}
+                </span>
+
+                <form action="{{ url_for('logout') }}"
+                      method="POST">
+
+                    <!-- CSRF Protection -->
+                    <input type="hidden"
+                           name="csrf_token"
+                           value="{{ csrf_token() }}">
+
+                    <button type="submit"
+                            class="btn btn-outline-secondary btn-sm">
+
+                        <i class="bi bi-box-arrow-right me-1"></i>
+                        Logout
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- =====================================================
+     JOB SEARCH HERO SECTION
+===================================================== -->
+
+<section class="search-hero">
+
+    <div class="container">
+
+        <div class="hero-content text-center">
+
+            <span class="hero-label">
+                YOUR CAREER STARTS HERE
+            </span>
+
+            <h1>Find Your Next Opportunity</h1>
+
+            <p>
+                Discover jobs, explore career opportunities,
+                and find roles that match your preferences.
+            </p>
+
+        </div>
+
+
+        <!-- Main Job Search Form -->
+        <form action="{{ url_for('dashboard') }}"
+              method="GET"
+              class="search-form">
+
+            <div class="row g-2">
+
+                <!-- Keyword Search -->
+                <div class="col-lg-5">
+
+                    <div class="search-field">
+
+                        <i class="bi bi-search"></i>
+
+                        <input type="text"
+                               name="q"
+                               value="{{ keyword }}"
+                               placeholder="Job title, skills, keywords..."
+                               aria-label="Search job keywords">
+
+                    </div>
+
+                </div>
+
+
+                <!-- Location Search -->
+                <div class="col-lg-4">
+
+                    <div class="search-field">
+
+                        <i class="bi bi-geo-alt"></i>
+
+                        <input type="text"
+                               name="location"
+                               value="{{ location }}"
+                               placeholder="City or location"
+                               aria-label="Search job location">
+
+                    </div>
+
+                </div>
+
+
+                <!-- Search Button -->
+                <div class="col-lg-3">
+
+                    <button type="submit"
+                            class="btn-search">
+
+                        <i class="bi bi-search me-2"></i>
+                        Search Jobs
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     MAIN JOB PORTAL CONTENT
+===================================================== -->
+
+<main class="container portal-content">
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% for category, message in messages %}
+
+            <div class="alert alert-{{ category }} alert-dismissible fade show"
+                 role="alert">
+
+                {{ message }}
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+        {% endfor %}
+
+    {% endwith %}
+
+
+    <div class="row g-4">
+
+        <!-- =================================================
+             FILTER SIDEBAR
+        ================================================= -->
+
+        <div class="col-lg-3">
+
+            <div class="filter-panel">
+
+                <div class="filter-heading">
+
+                    <h5>
+                        <i class="bi bi-sliders me-2"></i>
+                        Filters
+                    </h5>
+
+                    <a href="{{ url_for('dashboard') }}">
+                        Clear
+                    </a>
+
+                </div>
+
+
+                <!-- Filter Form -->
+                <form action="{{ url_for('dashboard') }}"
+                      method="GET">
+
+                    <!-- Preserve Keyword -->
+                    <input type="hidden"
+                           name="q"
+                           value="{{ keyword }}">
+
+
+                    <!-- Location Filter -->
+                    <div class="filter-group">
+
+                        <label for="filterLocation">
+                            Location
+                        </label>
+
+                        <input type="text"
+                               id="filterLocation"
+                               class="form-control"
+                               name="location"
+                               value="{{ location }}"
+                               placeholder="e.g. Karachi">
+
+                    </div>
+
+
+                    <!-- Employment Type -->
+                    <div class="filter-group">
+
+                        <label for="filterWorkType">
+                            Employment Type
+                        </label>
+
+                        <select name="work_type"
+                                id="filterWorkType"
+                                class="form-select">
+
+                            <option value="">
+                                All Types
+                            </option>
+
+                            {% for type in work_types %}
+
+                                <option value="{{ type }}"
+                                    {% if work_type == type %}
+                                        selected
+                                    {% endif %}>
+
+                                    {{ type }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Experience Filter -->
+                    <div class="filter-group">
+
+                        <label for="filterExperience">
+                            Your Experience (Years)
+                        </label>
+
+                        <input type="number"
+                               id="filterExperience"
+                               class="form-control"
+                               name="experience"
+                               value="{{ experience }}"
+                               min="0"
+                               max="60"
+                               step="0.5"
+                               placeholder="e.g. 2">
+
+                        <small>
+                            Shows jobs requiring no more than
+                            your entered experience.
+                        </small>
+
+                    </div>
+
+
+                    <!-- Filter Submit -->
+                    <button type="submit"
+                            class="btn-filter">
+
+                        Apply Filters
+
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- Hiring Promotion -->
+            <div class="sidebar-promo">
+
+                <i class="bi bi-plus-square"></i>
+
+                <h5>Hiring Someone?</h5>
+
+                <p>
+                    Create your own job listing and
+                    connect with potential candidates.
+                </p>
+
+                <a href="{{ url_for('post_job') }}"
+                   class="btn btn-light w-100">
+
+                    Post a Job
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             JOB LISTING AREA
+        ================================================= -->
+
+        <div class="col-lg-9">
+
+            <!-- Results Header -->
+            <div class="results-header">
+
+                <div>
+
+                    <h4>Available Jobs</h4>
+
+                    <p>
+                        {{ pagination.total }}
+                        opportunities found
+                    </p>
+
+                </div>
+
+                <a href="{{ url_for('post_job') }}"
+                   class="btn-post-job">
+
+                    <i class="bi bi-plus-lg me-2"></i>
+                    Post a Job
+
+                </a>
+
+            </div>
+
+
+            <!-- Job Cards -->
+            <div class="row g-3">
+
+                {% for job in jobs %}
+
+                    <div class="col-md-6">
+
+                        <div class="job-card">
+
+                            <!-- Job Card Top -->
+                            <div class="job-card-top">
+
+                                <div class="company-icon">
+
+                                    <i class="bi bi-building"></i>
+
+                                </div>
+
+                                <span class="job-type">
+                                    {{ job.work_type or 'Not specified' }}
+                                </span>
+
+                            </div>
+
+
+                            <!-- Job Title -->
+                            <h5>{{ job.title }}</h5>
+
+
+                            <!-- Company Name -->
+                            <p class="company-name">
+                                {{ job.company or 'Company not specified' }}
+                            </p>
+
+
+                            <!-- Job Metadata -->
+                            <div class="job-meta">
+
+                                <span>
+
+                                    <i class="bi bi-geo-alt"></i>
+
+                                    {{ job.location or 'Location not specified' }}
+
+                                </span>
+
+                                <span>
+
+                                    <i class="bi bi-briefcase"></i>
+
+                                    {{ job.min_experience }} Years
+
+                                </span>
+
+                            </div>
+
+
+                            <!-- Job Description -->
+                            <p class="job-description">
+
+                                {{ job.description[:135]
+                                   if job.description
+                                   else 'No description available.' }}
+
+                                {% if job.description
+                                      and job.description|length > 135 %}
+                                    ...
+                                {% endif %}
+
+                            </p>
+
+
+                            <!-- Job Card Footer -->
+                            <div class="job-card-footer">
+
+                                <div class="salary-label">
+
+                                    {% if job.salary_min is not none
+                                          and job.salary_max is not none %}
+
+                                        PKR {{ "{:,}".format(job.salary_min) }}
+
+                                        –
+
+                                        {{ "{:,}".format(job.salary_max) }}
+
+                                        <small>/month</small>
+
+                                    {% else %}
+
+                                        Salary not specified
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <!-- Job Details -->
+                                <a href="{{ url_for('job_detail', job_id=job.id) }}"
+                                   class="btn-view">
+
+                                    View Details
+
+                                    <i class="bi bi-arrow-right"></i>
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                {% else %}
+
+                    <!-- No Jobs Found -->
+                    <div class="col-12">
+
+                        <div class="empty-state">
+
+                            <i class="bi bi-search"></i>
+
+                            <h5>No jobs found</h5>
+
+                            <p>
+                                Try adjusting your search or filters,
+                                or publish a new job opportunity.
+                            </p>
+
+                            <a href="{{ url_for('dashboard') }}"
+                               class="btn btn-primary">
+
+                                Clear Filters
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- =================================================
+                 PAGINATION
+            ================================================= -->
+
+            {% if pagination.pages > 1 %}
+
+                <nav class="mt-4"
+                     aria-label="Job results pages">
+
+                    <ul class="pagination justify-content-center">
+
+                        <!-- Previous Page -->
+                        {% if pagination.has_prev %}
+
+                            <li class="page-item">
+
+                                <a class="page-link"
+                                   href="{{ url_for(
+                                       'dashboard',
+                                       page=pagination.prev_num,
+                                       q=keyword,
+                                       location=location,
+                                       work_type=work_type,
+                                       experience=experience
+                                   ) }}">
+
+                                    Previous
+
+                                </a>
+
+                            </li>
+
+                        {% endif %}
+
+
+                        <!-- Current Page -->
+                        <li class="page-item disabled">
+
+                            <span class="page-link">
+
+                                Page {{ pagination.page }}
+                                of {{ pagination.pages }}
+
+                            </span>
+
+                        </li>
+
+
+                        <!-- Next Page -->
+                        {% if pagination.has_next %}
+
+                            <li class="page-item">
+
+                                <a class="page-link"
+                                   href="{{ url_for(
+                                       'dashboard',
+                                       page=pagination.next_num,
+                                       q=keyword,
+                                       location=location,
+                                       work_type=work_type,
+                                       experience=experience
+                                   ) }}">
+
+                                    Next
+
+                                </a>
+
+                            </li>
+
+                        {% endif %}
+
+                    </ul>
+
+                </nav>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer class="portal-footer">
+
+    TalentIQ — Knowledge-Based Job Eligibility Expert System
+
+    <div>
+        CT-351 | NED University of Engineering & Technology
+    </div>
+
+</footer>
+
+
+<!-- Bootstrap JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

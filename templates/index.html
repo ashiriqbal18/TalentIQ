@@ -1,0 +1,622 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>TalentIQ | Intelligent Job Eligibility System</title>
+
+    <meta name="description"
+          content="An intelligent knowledge-based recruitment system featuring dynamic job eligibility evaluation, skill matching, and explainable rule-based reasoning.">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+          rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<!-- ========== NAVIGATION ========== -->
+
+<nav class="navbar navbar-expand-lg custom-navbar fixed-top">
+
+    <div class="container">
+
+        <a class="navbar-brand brand-logo" href="#home">
+            <span class="logo-icon">
+                <i class="bi bi-cpu"></i>
+            </span>
+            Talent<span>IQ</span>
+        </a>
+
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarMenu"
+                aria-controls="navbarMenu"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarMenu">
+
+            <ul class="navbar-nav mx-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#home">Home</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#about">Overview</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#features">Features</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#workflow">How It Works</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#technology">Technology</a>
+                </li>
+
+            </ul>
+
+            <a href="{{ url_for('login') }}"
+               class="btn btn-nav">
+                Open Dashboard
+                <i class="bi bi-arrow-up-right ms-2"></i>
+            </a>
+
+        </div>
+
+    </div>
+</nav>
+
+
+<!-- ========== HERO SECTION ========== -->
+
+<section class="hero-section" id="home">
+
+    <div class="container">
+
+        <div class="row align-items-center gy-5">
+
+            <div class="col-lg-7">
+
+                <div class="hero-badge">
+                    <span class="badge-dot"></span>
+                    KNOWLEDGE-BASED EXPERT SYSTEM
+                </div>
+
+                <h1 class="hero-title">
+                    Smarter Hiring.
+                    <br>
+                    <span>Explainable Decisions.</span>
+                </h1>
+
+                <p class="hero-description">
+                    An intelligent job eligibility and skill matching
+                    platform powered by Knowledge Representation,
+                    logical rules, and automated reasoning.
+
+                    Evaluate candidate qualifications, experience,
+                    skills, and certifications against dynamically
+                    defined job requirements.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <a href="{{ url_for('login') }}"
+                       class="btn btn-hero-primary">
+                        Launch Expert System
+                        <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+
+                    <a href="#about" class="btn btn-hero-secondary">
+                        Explore Project
+                    </a>
+
+                </div>
+
+                <div class="hero-highlights">
+
+                    <div>
+                        <i class="bi bi-check-circle-fill"></i>
+                        Dynamic Knowledge Base
+                    </div>
+
+                    <div>
+                        <i class="bi bi-check-circle-fill"></i>
+                        Rule-Based Inference
+                    </div>
+
+                    <div>
+                        <i class="bi bi-check-circle-fill"></i>
+                        Explainable Results
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- HERO VISUAL -->
+
+            <div class="col-lg-5">
+
+                <div class="hero-visual">
+
+                    <div class="visual-top">
+                        <div>
+                            <span class="visual-label">
+                                SYSTEM PREVIEW
+                            </span>
+                            <h5>Eligibility Analysis</h5>
+                        </div>
+
+                        <span class="preview-badge">
+                            <i class="bi bi-stars"></i>
+                            Rule-Based
+                        </span>
+                    </div>
+
+                    <div class="candidate-preview">
+                        <div class="candidate-avatar"><i class="bi bi-database"></i></div>
+                        <div><h6>Live Candidate Data</h6><small>Loaded after sign-in</small></div>
+                    </div>
+                    <div class="match-preview">
+                        <div class="preview-heading"><span>Saved profile evidence</span><i class="bi bi-database"></i></div>
+                        <div class="preview-heading"><span>Configured job requirements</span><i class="bi bi-list-check"></i></div>
+                        <div class="preview-heading"><span>Actual Horn-rule proof</span><i class="bi bi-diagram-3"></i></div>
+                    </div>
+                    <div class="decision-preview">
+                        <div class="decision-icon"><i class="bi bi-shield-check"></i></div>
+                        <div><small>LIVE EVALUATION ONLY</small><h6>No simulated eligibility result</h6><p>Sign in and select a real job to evaluate your saved profile.</p></div>
+                    </div>
+
+                    <div class="visual-footer">
+                        <i class="bi bi-diagram-3"></i>
+                        Explainable logical inference
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ========== PROJECT OVERVIEW ========== -->
+
+<section class="section-padding" id="about">
+
+    <div class="container">
+
+        <div class="section-heading text-center">
+
+            <span class="section-tag">PROJECT OVERVIEW</span>
+
+            <h2>Making Job Eligibility Decisions
+                <span>Intelligent & Transparent</span>
+            </h2>
+
+            <p>
+                Traditional recruitment systems often rely on
+                manual screening or basic keyword filtering.
+                TalentIQ introduces knowledge-based reasoning
+                to evaluate job eligibility through explicit rules.
+            </p>
+
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+
+                <div class="overview-card">
+
+                    <div class="feature-icon blue-icon">
+                        <i class="bi bi-database"></i>
+                    </div>
+
+                    <h4>Structured Knowledge</h4>
+
+                    <p>
+                        Organize candidates, job roles, qualifications,
+                        skills, certifications and experience using
+                        structured knowledge representations.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <div class="overview-card">
+
+                    <div class="feature-icon purple-icon">
+                        <i class="bi bi-diagram-3"></i>
+                    </div>
+
+                    <h4>Logical Reasoning</h4>
+
+                    <p>
+                        Apply First-Order Logic, Description Logic,
+                        and Horn Clause rules to derive meaningful
+                        eligibility conclusions.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <div class="overview-card">
+
+                    <div class="feature-icon green-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+
+                    <h4>Explainable Results</h4>
+
+                    <p>
+                        Understand why a candidate meets or fails
+                        specific job requirements using clear
+                        reasoning traces and rule explanations.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========== CORE FEATURES ========== -->
+
+<section class="section-padding features-section" id="features">
+
+    <div class="container">
+
+        <div class="section-heading text-center">
+
+            <span class="section-tag">CORE CAPABILITIES</span>
+
+            <h2>Everything Needed for
+                <span>Intelligent Eligibility Evaluation</span>
+            </h2>
+
+            <p>
+                A unified system for managing recruitment knowledge
+                and performing automated rule-based evaluation.
+            </p>
+
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon blue-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+
+                    <h5>Candidate Management</h5>
+
+                    <p>
+                        Dynamically add, edit, view, and delete
+                        candidate profiles with their qualifications,
+                        skills, experience, and certifications.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon purple-icon">
+                        <i class="bi bi-briefcase"></i>
+                    </div>
+
+                    <h5>Job Role Management</h5>
+
+                    <p>
+                        Create unlimited job role definitions
+                        with flexible mandatory and preferred
+                        eligibility requirements.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon green-icon">
+                        <i class="bi bi-person-check"></i>
+                    </div>
+
+                    <h5>Eligibility Checking</h5>
+
+                    <p>
+                        Compare candidate attributes with job
+                        requirements to determine eligibility
+                        through logical rules.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon orange-icon">
+                        <i class="bi bi-arrow-right-circle"></i>
+                    </div>
+
+                    <h5>Forward Chaining</h5>
+
+                    <p>
+                        Start with available facts and repeatedly
+                        apply inference rules to derive
+                        new eligibility conclusions.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon purple-icon">
+                        <i class="bi bi-arrow-left-circle"></i>
+                    </div>
+
+                    <h5>Backward Chaining</h5>
+
+                    <p>
+                        Start with an eligibility hypothesis
+                        and verify whether its supporting
+                        facts and conditions are satisfied.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon blue-icon">
+                        <i class="bi bi-bezier2"></i>
+                    </div>
+
+                    <h5>Knowledge Representation</h5>
+
+                    <p>
+                        Explore Frames, Semantic Networks,
+                        First-Order Logic, Description Logic,
+                        and Horn Clause representations.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========== HOW IT WORKS ========== -->
+
+<section class="section-padding" id="workflow">
+
+    <div class="container">
+
+        <div class="section-heading text-center">
+            <span class="section-tag">SYSTEM WORKFLOW</span>
+
+            <h2>How <span>TalentIQ Works</span></h2>
+
+            <p>
+                From structured candidate information
+                to explainable eligibility decisions.
+            </p>
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-lg-3 col-md-6">
+                <div class="workflow-card">
+                    <div class="step-number">01</div>
+                    <i class="bi bi-person-vcard"></i>
+                    <h5>Enter Candidate Data</h5>
+                    <p>
+                        Provide skills, qualifications,
+                        experience and certifications.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="workflow-card">
+                    <div class="step-number">02</div>
+                    <i class="bi bi-list-check"></i>
+                    <h5>Define Job Requirements</h5>
+                    <p>
+                        Specify mandatory and preferred
+                        conditions for each job role.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="workflow-card">
+                    <div class="step-number">03</div>
+                    <i class="bi bi-cpu"></i>
+                    <h5>Execute Logical Rules</h5>
+                    <p>
+                        Apply Horn Clause reasoning using
+                        forward or backward chaining.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="workflow-card">
+                    <div class="step-number">04</div>
+                    <i class="bi bi-clipboard-check"></i>
+                    <h5>Review Decision</h5>
+                    <p>
+                        Receive an eligibility result with
+                        supporting logical explanations.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========== TECHNOLOGY ========== -->
+
+<section class="section-padding tech-section" id="technology">
+
+    <div class="container">
+
+        <div class="section-heading text-center">
+
+            <span class="section-tag">TECHNOLOGY & REASONING</span>
+
+            <h2>Built on <span>Knowledge Engineering</span></h2>
+
+            <p>
+                Combining modern web technologies
+                with formal knowledge representation
+                and automated inference techniques.
+            </p>
+
+        </div>
+
+        <div class="tech-list">
+
+            <span><i class="bi bi-filetype-py"></i> Python</span>
+            <span><i class="bi bi-code-slash"></i> Flask</span>
+            <span><i class="bi bi-database"></i> SQLite</span>
+            <span><i class="bi bi-braces"></i> Frames</span>
+            <span><i class="bi bi-diagram-3"></i> Semantic Networks</span>
+            <span><i class="bi bi-calculator"></i> First-Order Logic</span>
+            <span><i class="bi bi-share"></i> Description Logic</span>
+            <span><i class="bi bi-cpu"></i> Horn Clauses</span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========== FINAL CTA ========== -->
+
+<section class="cta-section">
+
+    <div class="container text-center">
+
+        <span class="cta-label">INTELLIGENT RECRUITMENT</span>
+
+        <h2>Explore the Power of
+            <br>Rule-Based Decision Making
+        </h2>
+
+        <p>
+            Manage candidate information, define job
+            requirements, and explore knowledge-driven
+            eligibility evaluations.
+        </p>
+
+        <a href="{{ url_for('login') }}"
+           class="btn btn-cta">
+            Open Expert System
+            <i class="bi bi-arrow-right ms-2"></i>
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- ========== FOOTER ========== -->
+
+<footer class="footer">
+
+    <div class="container">
+
+        <div class="row gy-4">
+
+            <div class="col-lg-6">
+
+                <h4>Talent<span>IQ</span></h4>
+
+                <p>
+                    An intelligent Job Eligibility and Skill
+                    Matching Expert System based on Knowledge
+                    Representation and Rule-Based Reasoning.
+                </p>
+
+            </div>
+
+            <div class="col-lg-3">
+                <h6>Navigation</h6>
+
+                <a href="#home">Home</a>
+                <a href="#about">Overview</a>
+                <a href="#features">Features</a>
+                <a href="#workflow">How It Works</a>
+            </div>
+
+            <div class="col-lg-3">
+                <h6>Academic Project</h6>
+
+                <p>CT-351</p>
+                <p>Knowledge Representation & Reasoning</p>
+                <p>NED University of Engineering & Technology</p>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <span>TalentIQ — Job Eligibility Expert System</span>
+            <span>CT-351 | Complex Computing Problem</span>
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- Bootstrap JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>{{ "Edit Job" if editing|default(false) else "Post a Job" }} | TalentIQ</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+          rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='css/portal.css') }}"
+          rel="stylesheet">
+</head>
+<body>
+
+<nav class="simple-nav">
+    <div class="container d-flex justify-content-between align-items-center">
+        <a href="{{ url_for('dashboard') }}" class="brand-link">
+            <i class="bi bi-briefcase-fill"></i>
+            TalentIQ
+        </a>
+
+        <a href="{{ url_for('dashboard') }}" class="back-link">
+            <i class="bi bi-arrow-left"></i>
+            Back to Jobs
+        </a>
+    </div>
+</nav>
+
+<main class="form-page">
+
+    <div class="container">
+
+        <div class="form-heading text-center">
+            <span class="page-eyebrow">EMPLOYER WORKSPACE</span>
+
+            <h1>{{ "Edit Job" if editing|default(false) else "Post a New Job" }}</h1>
+
+            <p>
+                {{ "Update your existing listing without losing its requirements." if editing|default(false) else "Share your opportunity with job seekers by providing the details below." }}
+            </p>
+        </div>
+
+        <div class="job-form-card">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endwith %}
+
+            <form method="POST"
+                  action="{{ url_for('editing.edit_job', job_id=job.id) if editing|default(false) else url_for('post_job') }}">
+
+                <input type="hidden"
+                       name="csrf_token"
+                       value="{{ csrf_token() }}">
+
+                <h5 class="form-section-title">
+                    <i class="bi bi-briefcase"></i>
+                    Basic Job Information
+                </h5>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label">Job Title *</label>
+
+                        <input type="text"
+                               name="title"
+                               class="form-control"
+                               maxlength="150"
+                               value="{{ request.form.get('title', job.title or "") if editing|default(false) else "" }}"
+                               placeholder="e.g. Python Developer"
+                               required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Company Name *</label>
+
+                        <input type="text"
+                               name="company"
+                               class="form-control"
+                               maxlength="150"
+                               value="{{ request.form.get('company', job.company or "") if editing|default(false) else "" }}"
+                               placeholder="e.g. Tech Solutions"
+                               required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Department</label>
+
+                        <input type="text"
+                               name="department"
+                               class="form-control"
+                               maxlength="100"
+                               value="{{ request.form.get('department', job.department or "") if editing|default(false) else "" }}"
+                               placeholder="e.g. Software Engineering">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Location</label>
+
+                        <input type="text"
+                               name="location"
+                               class="form-control"
+                               maxlength="150"
+                               value="{{ request.form.get('location', job.location or "") if editing|default(false) else "" }}"
+                               placeholder="e.g. Karachi / Remote">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Work Type *</label>
+
+                        <select name="work_type"
+                                class="form-select"
+                                required>
+
+                            <option value="">Select work type</option>
+                            {% for item in work_types %}<option value="{{ item }}" {% if editing|default(false) and job.work_type == item %}selected{% endif %}>{{ item }}</option>{% endfor %}
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            Minimum Experience (Years)
+                        </label>
+
+                        <input type="number"
+                               name="min_experience"
+                               class="form-control"
+                               min="0"
+                               max="60"
+                               step="0.5"
+                               value="{{ job.min_experience if editing|default(false) else 0 }}"
+                               required>
+                    </div>
+
+                </div>
+
+
+                <h5 class="form-section-title mt-5">
+                    <i class="bi bi-cash-stack"></i>
+                    Salary Information (PKR / Month)
+                </h5>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label">Minimum Salary</label>
+
+                        <input type="number"
+                               name="salary_min"
+                               class="form-control"
+                               value="{{ job.salary_min if editing|default(false) and job.salary_min is not none else '' }}"
+                               min="0"
+                               placeholder="e.g. 60000">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Maximum Salary</label>
+
+                        <input type="number"
+                               name="salary_max"
+                               class="form-control"
+                               value="{{ job.salary_max if editing|default(false) and job.salary_max is not none else '' }}"
+                               min="0"
+                               placeholder="e.g. 120000">
+                    </div>
+
+                </div>
+
+
+                <h5 class="form-section-title mt-5">
+                    <i class="bi bi-file-text"></i>
+                    Job Description
+                </h5>
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Job Responsibilities & Description *
+                    </label>
+
+                    <textarea name="description"
+                              class="form-control"
+                              rows="7"
+                              maxlength="10000"
+                              placeholder="Describe the role, responsibilities, and expectations..."
+                              required>{{ job.description or "" if editing|default(false) else "" }}</textarea>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <a href="{{ url_for('my_jobs') if editing|default(false) else url_for('dashboard') }}"
+                       class="btn btn-light">
+                        Cancel
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        <i class="bi bi-send me-2"></i>
+                        {{ "Save Changes" if editing|default(false) else "Publish Job" }}
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+digraph Frames {
+ graph [label="Group 9  |  Frame Architecture & Facets",labelloc=t,fontname="DejaVu Sans",fontsize=21,bgcolor=white,ranksep=.85,nodesep=.55,pad=.32];
+ node [shape=record,style="rounded,filled",fontname="DejaVu Sans",fontsize=11,color="#BCD0E8",fillcolor="#F3F7FF",fontcolor="#213B5E",margin=".15,.12"];
+ edge [color="#7794B5",fontname="DejaVu Sans",fontsize=10,arrowsize=.7];
+ Entity [label="{Entity Frame|id: String [unique]}"];
+ Candidate [fillcolor="#EDF5FF",label="{Candidate Frame|id : String [key]\lqualification : Degree [exactly 1]\lskills : Set(Skill) [default ∅]\lcertifications : Set(Cert) [default ∅]\lexperienceYears : Integer [0..50]\lverified : Boolean [default false]\l}"];
+ JobRole [fillcolor="#EDF5FF",label="{JobRole Frame|id : String [key]\lacceptedDegrees : Set(Degree) [min 1]\lrequiredSkills : Set(Skill) [default ∅]\lrequiredCerts : Set(Cert) [default ∅]\lminimumYears : Integer [0..50]\lopen : Boolean [default false]\l}"];
+ Skill [fillcolor="#EAF8F2",label="{Skill Frame|id : String [key]\lkind : TechnicalSkill | SoftSkill\l}"];
+ Degree [fillcolor="#EAF8F2",label="{Degree Frame|id : String [key]\l}"];
+ Cert [fillcolor="#EAF8F2",label="{Certification Frame|id : String [key]\l}"];
+ Rule [fillcolor="#FFF5E8",label="{Inference Engine|numeric comparison facet: years ≥ minimum\lcompiled definite Horn clauses\lforward: least fixed point\lbackward: grounded goal proof\l}"];
+ Candidate -> Entity [label="is-a"]; JobRole -> Entity [label="is-a"]; Skill -> Entity [label="is-a"]; Degree -> Entity [label="is-a"]; Cert -> Entity [label="is-a"];
+ Candidate -> Skill [label="has-skill"]; Candidate -> Degree [label="has-degree"]; Candidate -> Cert [label="has-cert"];
+ JobRole -> Skill [label="requires-skill"]; JobRole -> Degree [label="accepts-degree"]; JobRole -> Cert [label="requires-cert"];
+ Candidate -> Rule [label="inputs"]; JobRole -> Rule [label="inputs"];
+}

@@ -1,0 +1,424 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Knowledge Explorer | TalentIQ</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+          rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/portal.css') }}"
+          rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/reasoning.css') }}"
+          rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/knowledge_explorer.css') }}"
+          rel="stylesheet">
+</head>
+
+<body>
+
+<!-- NAVIGATION -->
+<nav class="navbar navbar-expand-lg portal-navbar knowledge-nav">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+            <i class="bi bi-briefcase-fill me-2"></i>
+            Talent<span>IQ</span>
+        </a>
+        <div class="d-flex align-items-center gap-3">
+            <a class="knowledge-nav-link" href="{{ url_for('dashboard') }}">
+                <i class="bi bi-search me-1"></i>Find Jobs
+            </a>
+            <a class="knowledge-nav-link" href="{{ url_for('profile') }}">
+                <i class="bi bi-person me-1"></i>My Profile
+            </a>
+        </div>
+    </div>
+</nav>
+
+<main class="container knowledge-page">
+
+    <!-- HEADER -->
+    <header class="knowledge-header">
+        <div class="knowledge-header-copy">
+            <span class="knowledge-eyebrow">
+                <i class="bi bi-diagram-3 me-1"></i>
+                CT-351 · KNOWLEDGE REPRESENTATION
+            </span>
+
+            <h1>Knowledge Explorer</h1>
+
+            <p>
+                Explore how TalentIQ represents candidate and job
+                knowledge, then applies logical rules to explain
+                eligibility decisions.
+            </p>
+
+            <div class="knowledge-tags">
+                <span><i class="bi bi-boxes"></i> Frames</span>
+                <span><i class="bi bi-share"></i> Semantic Network</span>
+                <span><i class="bi bi-braces"></i> Formal Logic</span>
+                <span><i class="bi bi-arrow-left-right"></i> Inference</span>
+            </div>
+        </div>
+
+        <div class="knowledge-header-art" aria-hidden="true">
+            <div class="knowledge-header-icon">
+                <i class="bi bi-cpu"></i>
+            </div>
+            <div class="knowledge-art-label">
+                KNOWLEDGE → RULES → PROOF
+            </div>
+        </div>
+    </header>
+
+    <!-- ACTUAL RECORD SELECTION -->
+    <section class="knowledge-section">
+      <div class="knowledge-card">
+        <form method="GET" action="{{ url_for('knowledge_explorer') }}" class="d-flex flex-wrap align-items-end gap-3">
+          <div class="flex-grow-1">
+            <label class="form-label fw-semibold" for="job_id">Select an actual job</label>
+            <select class="form-select" id="job_id" name="job_id" {% if not jobs %}disabled{% endif %}>
+              {% for entry in jobs %}
+              <option value="{{ entry.id }}" {% if job and job.id == entry.id %}selected{% endif %}>{{ entry.title }} — {{ entry.company or 'Unspecified company' }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button class="btn btn-primary" {% if not jobs %}disabled{% endif %}>Load Knowledge</button>
+          {% if job %}<a class="btn btn-outline-secondary" href="{{ url_for('knowledge_graph_dot', job_id=job.id) }}">Export live DOT</a>{% endif %}
+        </form>
+        {% if not candidate %}<p class="knowledge-empty mt-3">No candidate profile is connected to your account. <a href="{{ url_for('profile') }}">Create your profile</a>.</p>{% endif %}
+        {% if not jobs %}<p class="knowledge-empty mt-3">No accessible job records exist yet. <a href="{{ url_for('post_job') }}">Post a job</a> to create job knowledge.</p>{% endif %}
+      </div>
+    </section>
+
+    <section class="knowledge-section" id="frames">
+      <div class="knowledge-section-heading"><div class="knowledge-section-icon"><i class="bi bi-grid-3x3-gap"></i></div>
+        <div><div class="knowledge-kicker">01 / LIVE FRAME INSTANCES</div><h2>Frames, Slots &amp; Facets</h2><p>Values come from the current user's profile and selected job.</p></div></div>
+      <div class="row g-4">
+        <div class="col-lg-6"><article class="knowledge-card h-100">
+          <div class="knowledge-card-title"><span class="knowledge-card-icon"><i class="bi bi-person-badge"></i></span><div><span class="knowledge-card-overline">LIVE CANDIDATE FRAME</span><h3>{{ candidate.full_name if candidate else 'No candidate profile' }}</h3></div></div>
+          {% for label, values in [('Skills',live.profile.skills),('Qualifications',live.profile.education),('Certifications',live.profile.certifications),('Experience',live.profile.experiences)] %}
+          <div class="knowledge-live-slot"><strong>{{ label }} <small>({{ values|length }})</small></strong>
+            {% if values %}{% for name, facet in values %}<div class="knowledge-live-value"><span>{{ name }}</span><small>{{ facet or 'Not specified' }}</small></div>{% endfor %}
+            {% else %}<div class="knowledge-empty">No {{ label|lower }} recorded — unknown</div>{% endif %}
+          </div>{% endfor %}
+          <div class="knowledge-facet-note"><i class="bi bi-info-circle"></i> An unrecorded credential is not proven absent. Profile data is self-declared.</div>
+        </article></div>
+        <div class="col-lg-6"><article class="knowledge-card h-100">
+          <div class="knowledge-card-title"><span class="knowledge-card-icon job"><i class="bi bi-briefcase"></i></span><div><span class="knowledge-card-overline">LIVE JOB FRAME</span><h3>{{ job.title if job else 'No selected job' }}</h3></div></div>
+          {% if job %}
+          <div class="knowledge-live-slot"><strong>Minimum experience</strong><div class="knowledge-live-value"><span>{{ job.min_experience }} years</span><small>Mandatory</small></div></div>
+          <div class="knowledge-live-slot"><strong>Structured requirements ({{ live.requirements|length }})</strong>
+            {% if live.requirements %}{% for requirement in live.requirements %}
+              <div class="knowledge-live-value"><span>{{ requirement.name }} <small>· {{ requirement.category|title }}</small></span><small>{{ requirement.importance|title }}{% if requirement.level %} · {{ requirement.level }}{% endif %}</small></div>
+            {% endfor %}{% else %}<div class="knowledge-empty">No structured requirements configured</div>{% endif %}
+          </div>
+          {% else %}<p class="knowledge-empty mt-3">Choose an accessible job to see its actual requirements.</p>{% endif %}
+        </article></div>
+      </div>
+    </section>
+
+    <section class="knowledge-section" id="network">
+      <div class="knowledge-section-heading"><div class="knowledge-section-icon"><i class="bi bi-share"></i></div>
+        <div><div class="knowledge-kicker">02 / LIVE RELATIONSHIPS</div><h2>Semantic Network</h2><p>Only actual candidate evidence and saved job requirements are drawn.</p></div></div>
+      <article class="knowledge-card knowledge-network-card">
+        <div class="knowledge-network-topline"><span class="knowledge-view-label"><i class="bi bi-diagram-3"></i> Live Knowledge Graph</span><span class="knowledge-concept-badge">{{ live.entity_count }} nodes · {{ live.relationship_count }} relationships</span></div>
+        {% if candidate or job %}
+        <div class="semantic-graph-scroll">
+          <svg class="semantic-network-svg" viewBox="0 0 1060 {{ live.graph_height }}" role="img" aria-label="Live candidate and job evidence graph">
+            <defs>
+              <marker id="graph-blue-arrow" markerWidth="7" markerHeight="7" refX="9" refY="5" orient="auto" viewBox="0 0 10 10"><path d="M0 0 L10 5 L0 10Z" fill="#4169e1"/></marker>
+              <marker id="graph-green-arrow" markerWidth="7" markerHeight="7" refX="9" refY="5" orient="auto" viewBox="0 0 10 10"><path d="M0 0 L10 5 L0 10Z" fill="#20967c"/></marker>
+              <marker id="graph-orange-arrow" markerWidth="7" markerHeight="7" refX="9" refY="5" orient="auto" viewBox="0 0 10 10"><path d="M0 0 L10 5 L0 10Z" fill="#c38b35"/></marker>
+            </defs>
+            {% if candidate %}<g class="graph-concept"><ellipse cx="165" cy="75" rx="138" ry="35"/><text x="165" y="79">{{ candidate.full_name|truncate(23, True, "…") }}</text><title>Candidate #{{ candidate.id }} · {{ candidate.full_name }}</title></g>{% endif %}
+            {% if job %}<g class="graph-concept"><ellipse cx="895" cy="75" rx="139" ry="35"/><text x="895" y="79">{{ job.title|truncate(23, True, "…") }}</text><title>Job #{{ job.id }} · {{ job.title }}</title></g>{% endif %}
+            {% for node in live.graph %}
+              {% if node.has and candidate %}<path class="graph-line graph-line-green" d="M 165 110 L 438 {{ node.y }}"/><text class="graph-label" x="255" y="{{ node.y - 25 }}">has-{{ node.category|lower }}</text>{% endif %}
+              {% if node.required and job %}<path class="graph-line graph-line-orange" d="M 895 110 L 622 {{ node.y }}"/><text class="graph-label" x="680" y="{{ node.y - 25 }}">requires-{{ node.category|lower }}</text>{% endif %}
+              <g class="graph-individual"><ellipse cx="530" cy="{{ node.y }}" rx="92" ry="31"/><text x="530" y="{{ node.y + 4 }}">{{ node.name|truncate(21, True, '…') }}</text><title>{{ node.category }}: {{ node.name }}{% if node.evidence_detail %} — profile: {{ node.evidence_detail }}{% endif %}{% if node.requirement_detail %} — job: {{ node.requirement_detail }}{% endif %}</title></g>
+              {% if node.has %}<text class="graph-facet-label" x="530" y="{{ node.y + 43 }}">Profile: {{ node.evidence_detail|truncate(28, True, '…') }}</text>{% endif %}
+              {% if node.required %}<text class="graph-facet-label" x="530" y="{{ node.y + (58 if node.has else 44) }}">Required: {{ node.requirement_detail|truncate(28, True, '…') }}</text>{% endif %}
+            {% endfor %}
+            {% if not live.graph %}<text x="530" y="185" text-anchor="middle" fill="#627795" font-size="16">No saved skills, qualifications, certifications or job requirements yet.</text>{% endif %}
+          </svg>
+        </div>
+        {% else %}<div class="knowledge-empty">Create a candidate profile or post a job to generate factual nodes.</div>{% endif %}
+        <div class="semantic-legend"><span><i class="semantic-dot concept-dot"></i>Candidate / Job</span><span><i class="semantic-dot individual-dot"></i>Recorded entity</span><span><i class="semantic-line evidence-line"></i>Profile statement</span><span><i class="semantic-line requirement-line"></i>Job requirement</span></div>
+        <div class="knowledge-network-caption"><i class="bi bi-info-circle"></i>No evidence edges are invented for missing profile records. A relationship does not itself prove eligibility; compare required levels in the live report.</div>
+      </article>
+    </section>
+
+    <!-- ============================================= -->
+    <!-- SECTION 3: FORMAL LOGIC -->
+    <!-- ============================================= -->
+
+    <section class="knowledge-section"
+             id="logic"
+             aria-labelledby="logic-title">
+
+        <div class="knowledge-section-heading">
+            <div class="knowledge-section-icon">
+                <i class="bi bi-braces"></i>
+            </div>
+            <div>
+                <div class="knowledge-kicker">
+                    03 / FORMAL KNOWLEDGE
+                </div>
+                <h2 id="logic-title">Logic &amp; Rule Definitions</h2>
+                <p>
+                    The formal ideas behind the executable eligibility rules.
+                </p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- FOL -->
+            <div class="col-lg-6">
+                <article class="knowledge-card knowledge-logic-card h-100">
+
+                    <div class="knowledge-logic-head">
+                        <div>
+                            <span class="knowledge-card-overline">
+                                FORMAL SPECIFICATION
+                            </span>
+                            <h3>First-Order Logic</h3>
+                        </div>
+
+                        <span class="knowledge-logic-symbol">∀</span>
+                    </div>
+
+                    <p>
+                        If a candidate and job exist, experience is
+                        sufficient, and every mandatory condition is met,
+                        eligibility follows.
+                    </p>
+
+                    <div class="knowledge-code-label">
+                        <i class="bi bi-code-square"></i>
+                        Eligibility implication
+                    </div>
+
+                    <pre class="knowledge-code"><code>∀c,j:
+ Candidate(c) ∧ Job(j) ∧
+ MeetsExperience(c,j) ∧
+ MeetsEveryMandatoryRequirement(c,j)
+ → Eligible(c,j)</code></pre>
+
+                    <div class="knowledge-logic-footer">
+                        <i class="bi bi-lightbulb"></i>
+                        Quantifiers express a rule for all candidates
+                        and jobs.
+                    </div>
+
+                </article>
+            </div>
+
+            <!-- DESCRIPTION LOGIC -->
+            <div class="col-lg-6">
+                <article class="knowledge-card knowledge-logic-card h-100">
+
+                    <div class="knowledge-logic-head">
+                        <div>
+                            <span class="knowledge-card-overline">
+                                CONCEPT RELATIONSHIPS
+                            </span>
+                            <h3>Description Logic</h3>
+                        </div>
+
+                        <span class="knowledge-logic-symbol">⊑</span>
+                    </div>
+
+                    <p>
+                        Subsumption and role restrictions describe
+                        how domain concepts relate.
+                    </p>
+
+                    <div class="knowledge-code-label">
+                        <i class="bi bi-code-square"></i>
+                        Class axioms
+                    </div>
+
+                    <pre class="knowledge-code"><code>EligibleCandidate ⊑ Candidate
+JobWithRequirements ⊑ Job
+Candidate ⊑ ∃hasProfile.User</code></pre>
+
+                    <div class="knowledge-logic-footer">
+                        <i class="bi bi-lightbulb"></i>
+                        Illustrative axioms, not output from a
+                        DL theorem prover.
+                    </div>
+
+                </article>
+            </div>
+
+        </div>
+
+        <article class="knowledge-card mt-4" id="facts">
+          <h3 class="mb-3">Grounded facts from current records</h3>
+          {% if live.statements %}
+            <div class="knowledge-facts">{% for fact in live.statements %}<code>{{ fact[0] }}({% for argument in fact[1:] %}{{ argument|tojson }}{% if not loop.last %}, {% endif %}{% endfor %})</code>{% endfor %}</div>
+          {% else %}<p class="knowledge-empty">No database-backed assertions available.</p>{% endif %}
+          {% if live.analysis %}<div class="knowledge-live-slot"><strong>Current eligibility inference</strong>
+            <div class="knowledge-live-value"><span>{{ live.analysis.status }}</span><a href="{{ url_for('check_eligibility', job_id=job.id) }}">View grounded proof trace</a></div>
+          </div>{% endif %}
+        </article>
+        <div class="knowledge-disclaimer">
+            <i class="bi bi-shield-exclamation"></i>
+            <div>
+                <strong>Implementation Boundary</strong>
+                <p>
+                    FOL and DL document the logical model.
+                    The live Eligibility Checker executes finite positive
+                    Horn clauses through Forward and Backward Chaining.
+                    No general-purpose FOL/DL theorem prover is running.
+                </p>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- ============================================= -->
+    <!-- SECTION 4: INFERENCE METHODS -->
+    <!-- ============================================= -->
+
+    <section class="knowledge-section"
+             id="inference"
+             aria-labelledby="inference-title">
+
+        <div class="knowledge-section-heading">
+            <div class="knowledge-section-icon">
+                <i class="bi bi-signpost-split"></i>
+            </div>
+            <div>
+                <div class="knowledge-kicker">
+                    04 / REASONING METHODS
+                </div>
+                <h2 id="inference-title">How Inference Works</h2>
+                <p>
+                    Two proof strategies, one rule base, explainable results.
+                </p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- FORWARD CHAINING -->
+            <div class="col-lg-6">
+                <article class="knowledge-card knowledge-method h-100">
+
+                    <div class="knowledge-method-head">
+                        <span class="knowledge-method-icon forward">
+                            <i class="bi bi-arrow-right-circle"></i>
+                        </span>
+
+                        <div>
+                            <h3>Forward Chaining</h3>
+                            <small>Data-driven reasoning</small>
+                        </div>
+                    </div>
+
+                    <div class="knowledge-method-steps">
+                        <div>
+                            <b>01</b>
+                            <span>Start with known candidate and job facts</span>
+                        </div>
+                        <div>
+                            <b>02</b>
+                            <span>Fire applicable Horn rules in rounds</span>
+                        </div>
+                        <div>
+                            <b>03</b>
+                            <span>
+                                Derive facts until a fixed point is reached
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="knowledge-method-outcome">
+                        <i class="bi bi-check2-circle"></i>
+                        If all mandatory facts are proved,
+                        derive eligibility.
+                    </div>
+
+                </article>
+            </div>
+
+            <!-- BACKWARD CHAINING -->
+            <div class="col-lg-6">
+                <article class="knowledge-card knowledge-method h-100">
+
+                    <div class="knowledge-method-head">
+                        <span class="knowledge-method-icon backward">
+                            <i class="bi bi-bullseye"></i>
+                        </span>
+
+                        <div>
+                            <h3>Backward Chaining</h3>
+                            <small>Goal-driven reasoning</small>
+                        </div>
+                    </div>
+
+                    <div class="knowledge-method-steps">
+                        <div>
+                            <b>01</b>
+                            <span>
+                                Start with eligible(candidate, job)
+                            </span>
+                        </div>
+                        <div>
+                            <b>02</b>
+                            <span>
+                                Expand the goal into supporting rule premises
+                            </span>
+                        </div>
+                        <div>
+                            <b>03</b>
+                            <span>
+                                Verify subgoals using known evidence
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="knowledge-method-outcome">
+                        <i class="bi bi-search"></i>
+                        An unproved goal is not necessarily false.
+                    </div>
+
+                </article>
+            </div>
+
+        </div>
+
+        <div class="knowledge-note">
+            <i class="bi bi-info-circle"></i>
+            <div>
+                <strong>Incomplete knowledge matters</strong>
+                <p>
+                    Unrecorded skills or qualifications do not prove
+                    absence. The outcome can be
+                    <em>Insufficient Information</em>.
+                    Preferred conditions never block eligibility.
+                </p>
+            </div>
+        </div>
+
+        <div class="knowledge-source">
+            Original CT-351 inference mechanics preserved in
+            <code>reasoning/original_job_skill_engine.py</code>
+            and extended for SQLite facts, proficiency thresholds,
+            multiple qualifications and preferred requirements.
+        </div>
+
+    </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
